@@ -1,0 +1,11 @@
+.fight {
+    padding-top: 1rem;
+}
+
+.dragging {
+    position: fixed;
+    z-index: 10;
+    background: gray;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px outset;
+}
