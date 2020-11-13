@@ -1,0 +1,11 @@
+version: "3.0"
+services: 
+  app:
+    build: app/
+    volumes: 
+      - ./app:/usr/src/app
+    command: npm run dev
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports: 
+      - 80:3000
