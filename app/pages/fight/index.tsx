@@ -1,26 +1,58 @@
 import React, { createRef } from 'react';
-import Character from '../../components/Character/Character';
+import Character, { onChangeParameter } from '../../components/character/Character';
 import { Col, Container, Row } from 'react-bootstrap';
 import styles from './fight.module.css';
-import { CharacterType } from '../../fictures/characters';
 import characters from '../../fictures/characters';
+import CharacterService, { CharacterType } from '../../services/CharacterService';
+
+type CharacterEntry = {
+        order: number,
+        left: number,
+        ref: React.RefObject<HTMLDivElement>
+        data: CharacterType
+};
 
 type FightState = {
     isDragging: boolean,
-    characters: Array<CharacterType>
+    characters: Array<CharacterEntry>
 };
 
 class Fight extends React.Component<{}, FightState>  {
-
     state = {
         isDragging: false,
-        characters: characters
+        characters: new Array<CharacterEntry>(),
+    }
+
+    constructor(props: {}) {
+        super(props);
+        const characterService = new CharacterService();
+        this.state.characters = characterService.getCharacters() 
+            .map((character: CharacterType) => ({
+                data: character,
+                order: 100 - character.secondaryAttributes.Initiative,
+                left: 0,
+                ref: createRef<HTMLDivElement>()
+            })
+        );
+    }
+
+    updateOrder = (data: onChangeParameter) => {
+        const newCharacters = this.state.characters.map((character: CharacterEntry) => {
+            if (data.id === character.data.id) {
+                character.order = 100 - (data.Initiative ?? 0);
+            }
+            return character;
+        })
+
+        this.setState({
+            characters: newCharacters
+        });
     }
 
     updateOrderManual = (left: number, id: number) => {
         const newCharacters = this.state.characters
-            .map((character: CharacterType) => {
-                if (character.id === id) {
+            .map((character: CharacterEntry) => {
+                if (character.data.id === id) {
                     character.left = left;
                 } else {
                     character.left = character.ref.current?.getBoundingClientRect().x ?? 0;
@@ -28,7 +60,7 @@ class Fight extends React.Component<{}, FightState>  {
                 return character;
             })
             .sort((a, b) => a.left - b.left)
-            .map((character: CharacterType, index: number) => {
+            .map((character: CharacterEntry, index: number) => {
                 character.order = index;
                 return character;
             });
@@ -67,13 +99,13 @@ class Fight extends React.Component<{}, FightState>  {
         this.updateOrderManual(event.clientX, id);
     }
 
-    renderCharacter = (character: CharacterType, key: number) => 
+    renderCharacter = (character: CharacterEntry, key: number) => 
         <Col
             key={key} 
             xs={{ order: character.order }} 
             md="auto"
             ref={character.ref}                      
-            onMouseUp={(event: React.MouseEvent) => this.onMouseUp(event, character.id)}
+            onMouseUp={(event: React.MouseEvent) => this.onMouseUp(event, character.data.id)}
             onMouseMove={this.onDrag}
         >
             <div className={styles.dragbar}
@@ -81,8 +113,8 @@ class Fight extends React.Component<{}, FightState>  {
             >
             </div>
             <Character          
-                name={character.title}
-                attributes = {character.attributes}
+                {...character.data}
+                onDataChange={this.updateOrder}
             />
         </Col>
 

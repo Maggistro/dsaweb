@@ -1,15 +1,4 @@
-import { createRef } from "react";
-import { Attributes } from "../components/Character/Character";
-
-export type CharacterType = {
-    id: number,
-    title: string
-    attributes: Attributes,
-    order: number,
-    left: number,
-    ref: React.RefObject<HTMLDivElement>,
-};
-
+import { BlankCharacterType } from "../services/CharacterService";
 
 export default [
     {
@@ -24,10 +13,7 @@ export default [
             Gewandheit: 10,
             Konstitutiokn: 10,
             Koerperkraft: 10        
-        },
-        order: 1,
-        left: 0,
-        ref: createRef<HTMLDivElement>()
+        }
     },
     {
         id: 2,
@@ -41,10 +27,7 @@ export default [
             Gewandheit: 10,
             Konstitutiokn: 10,
             Koerperkraft: 10        
-        },
-        order: 2,
-        left: 0,
-        ref: createRef<HTMLDivElement>()
+        }
     },
     {
         id: 3,
@@ -58,9 +41,6 @@ export default [
             Gewandheit: 10,
             Konstitutiokn: 10,
             Koerperkraft: 10        
-        },
-        order: 3,
-        left: 0,
-        ref: createRef<HTMLDivElement>()
+        }
     },
-] as Array<CharacterType>
+] as Array<BlankCharacterType>

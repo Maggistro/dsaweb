@@ -1,8 +1,8 @@
 {
     "scripts": {
         "dev": "npm install && next",
-        "build": "npm install && next build",
-        "start": "npm install && next start"
+        "build": "next build",
+        "start": "next start"
     },
     "dependencies": {
         "next": "latest",
@@ -15,6 +15,6 @@
         "typescript": "latest",
         "@types/react": "latest",
         "@types/node": "latest",
-        "@types/bootstrap-react": "latest"
+        "@types/react-bootstrap": "latest"
     }
 }

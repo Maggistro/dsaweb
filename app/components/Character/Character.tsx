@@ -1,61 +1,32 @@
 import React from 'react';
 import { FormControl, FormGroup, FormLabel, InputGroup } from 'react-bootstrap';
+import CharacterService, { Attributes, CharacterType, SecondaryAttributes } from '../../services/CharacterService';
 import styles from './Character.module.css';
 
-type Props = {
-    name: string,
-    attributes: Attributes
+type State = {
+    initiativeModifier: number
 }
 
-export type Attributes = {
-    Mut: number,
-    Klugheit: number,
-    Intuition: number,
-    Charisma: number,
-    Fingerfertigkeit: number,
-    Gewandheit: number,
-    Konstitutiokn: number,
-    Koerperkraft: number    
+type Props = CharacterType & {
+    onDataChange: Function
 }
 
-type CharacterState = {
-    Lebensenergie: number,
-    Astralenergie: number,
-    Karmaenergie: number,
-    Seelenkraft:number,
-    Zaehigkeit: number,
-    Ausweichen: number,
-    Initiative: number,
-    Geschwindigkeit: number,
-    Wundschwelle: number
+export type onChangeParameter = {
+    id: number,
+    Initiative?: number
 }
 
-class Character extends React.Component<Props, CharacterState> {
+class Character extends React.Component<Props, State> {
+
+    characterService: CharacterService;
 
     state = {
-        Lebensenergie: 0,
-        Astralenergie: 0,
-        Karmaenergie: 0,
-        Seelenkraft: 0,
-        Zaehigkeit: 0,
-        Ausweichen: 0,
-        Initiative: 0,
-        Geschwindigkeit: 0,
-        Wundschwelle: 0
+        initiativeModifier: 0
     }
 
-    componentDidMount() {
-        this.setState({
-            Lebensenergie: 0, // TODO 
-            Astralenergie: 0, // TODO 20/Zauberer + Leiteigenschaft
-            Karmaenergie: 0, // TODO 20/Geweit + Leiteigenschaft
-            Seelenkraft: 0, // TODO GW spezies + (Mut + Klugheit + Intuition)/6
-            Zaehigkeit: 9, // TODO GW spezies + (Konstituion + Konstitution + Koerperkraft)/6
-            Ausweichen: this.props.attributes.Gewandheit / 2,
-            Initiative: (this.props.attributes.Mut + this.props.attributes.Gewandheit) / 2,
-            Geschwindigkeit: 0, // TODO Gw spezies ( einbeinig )
-            Wundschwelle: this.props.attributes.Konstitutiokn / 2
-        });
+    constructor(props: Props) {
+        super(props);
+        this.characterService = new CharacterService();
     }
 
     onClick = (event: React.MouseEvent) => {
@@ -64,22 +35,31 @@ class Character extends React.Component<Props, CharacterState> {
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = parseInt(event.target.value, 10); 
         this.setState({
-            Initiative: parseInt(event.target.value, 10)
+            initiativeModifier: newValue
         });
+
+        this.props.onDataChange({
+            id: this.props.id,
+            Initiative: this.props.secondaryAttributes.Initiative + newValue,
+        });    
     }
 
     render() {
         return <div className={styles.character}>
-            <h3>{this.props.name}</h3>
+            <h3>{this.props.title}</h3>
+            <div>
+                Initiative {this.state.initiativeModifier + this.props.secondaryAttributes?.Initiative}
+            </div>
             <FormGroup>
                 <FormLabel>
-                    Initiative
+                    Initiative Modifier
                 </FormLabel>
                 <FormControl
                     onChange={this.handleChange} 
                     type="number" 
-                    value={this.state.Initiative}
+                    value={this.state.initiativeModifier}
                 />
             </FormGroup>
         </div>
