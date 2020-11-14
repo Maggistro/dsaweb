@@ -17,10 +17,6 @@ class Fight extends React.Component<{}, FightState>  {
         characters: characters
     }
 
-    updateOrder = () => {
-
-    }
-
     updateOrderManual = (left: number, id: number) => {
         const newCharacters = this.state.characters
             .map((character: CharacterType) => {
@@ -87,7 +83,6 @@ class Fight extends React.Component<{}, FightState>  {
             <Character          
                 name={character.title}
                 attributes = {character.attributes}
-                onInitiativeChange = {this.updateOrder}
             />
         </Col>
 
