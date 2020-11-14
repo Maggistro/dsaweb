@@ -1,13 +1,13 @@
 import React from 'react';
 import { FormControl, FormGroup, FormLabel, InputGroup } from 'react-bootstrap';
-import CharacterService, { Attributes, CharacterType, SecondaryAttributes } from '../../services/CharacterService';
+import CharacterService, { Attributes, BlankCharacterType, CharacterType, SecondaryAttributes } from '../../services/CharacterService';
 import styles from './Character.module.css';
 
 type State = {
     initiativeModifier: number
 }
 
-type Props = CharacterType & {
+type Props = BlankCharacterType & {
     onDataChange: Function
 }
 
@@ -40,17 +40,20 @@ class Character extends React.Component<Props, State> {
             initiativeModifier: newValue
         });
 
-        this.props.onDataChange({
-            id: this.props.id,
-            Initiative: this.props.secondaryAttributes.Initiative + newValue,
-        });    
+        this.characterService.modifySecondary(
+            this.props.id,
+            {
+                Initiative: newValue,
+            }
+        );
+        this.props.onDataChange();
     }
 
     render() {
         return <div className={styles.character}>
             <h3>{this.props.title}</h3>
             <div>
-                Initiative {this.state.initiativeModifier + this.props.secondaryAttributes?.Initiative}
+                Initiative {this.characterService.getInitiative(this.props.id)}
             </div>
             <FormGroup>
                 <FormLabel>

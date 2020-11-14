@@ -3,13 +3,13 @@ import Character, { onChangeParameter } from '../../components/character/Charact
 import { Col, Container, Row } from 'react-bootstrap';
 import styles from './fight.module.css';
 import characters from '../../fictures/characters';
-import CharacterService, { CharacterType } from '../../services/CharacterService';
+import CharacterService, { BlankCharacterType, CharacterType } from '../../services/CharacterService';
 
 type CharacterEntry = {
         order: number,
         left: number,
         ref: React.RefObject<HTMLDivElement>
-        data: CharacterType
+        data: BlankCharacterType
 };
 
 type FightState = {
@@ -23,13 +23,15 @@ class Fight extends React.Component<{}, FightState>  {
         characters: new Array<CharacterEntry>(),
     }
 
+    characterService: CharacterService;
+
     constructor(props: {}) {
         super(props);
-        const characterService = new CharacterService();
-        this.state.characters = characterService.getCharacters() 
-            .map((character: CharacterType) => ({
+        this.characterService = new CharacterService();
+        this.state.characters = this.characterService.getCharacters() 
+            .map((character: BlankCharacterType) => ({
                 data: character,
-                order: 100 - character.secondaryAttributes.Initiative,
+                order: 20 - this.characterService.getInitiative(character.id),
                 left: 0,
                 ref: createRef<HTMLDivElement>()
             })
@@ -37,12 +39,10 @@ class Fight extends React.Component<{}, FightState>  {
     }
 
     updateOrder = (data: onChangeParameter) => {
-        const newCharacters = this.state.characters.map((character: CharacterEntry) => {
-            if (data.id === character.data.id) {
-                character.order = 100 - (data.Initiative ?? 0);
-            }
-            return character;
-        })
+        const newCharacters = this.state.characters.map((entry) => ({
+            ...entry,
+            order: 20 - this.characterService.getInitiative(entry.data.id)
+        }));
 
         this.setState({
             characters: newCharacters
@@ -89,14 +89,16 @@ class Fight extends React.Component<{}, FightState>  {
     }
 
     onMouseUp = (event: React.MouseEvent, id: number) => {
-        this.setState({
-            isDragging: false
-        });
-        event.currentTarget.setAttribute('style', 
-            `top: 0px; left: 0px;`
-        );
-        event.currentTarget.classList.remove(styles.dragging);
-        this.updateOrderManual(event.clientX, id);
+        if (this.state.isDragging) {
+            this.setState({
+                isDragging: false
+            });
+            event.currentTarget.setAttribute('style', 
+                `top: 0px; left: 0px;`
+            );
+            event.currentTarget.classList.remove(styles.dragging);
+            this.updateOrderManual(event.clientX, id);    
+        }
     }
 
     renderCharacter = (character: CharacterEntry, key: number) => 
