@@ -2,50 +2,26 @@ import React, { createRef } from 'react';
 import Character from '../../components/Character/Character';
 import { Col, Container, Row } from 'react-bootstrap';
 import styles from './fight.module.css';
+import { CharacterType } from '../../fictures/characters';
+import characters from '../../fictures/characters';
 
 type FightState = {
     isDragging: boolean,
     characters: Array<CharacterType>
 };
 
-type CharacterType = {
-    id: number,
-    order: number,
-    left: number,
-    ref: React.RefObject<HTMLDivElement>,
-    title: string
-};
-
 class Fight extends React.Component<{}, FightState>  {
 
     state = {
         isDragging: false,
-        characters: [
-            {
-                id: 1,
-                title: "Title1",
-                order: 1,
-                left: 0,
-                ref: createRef<HTMLDivElement>()
-            },
-            {
-                id: 2,
-                title: "Title2",
-                order: 2,
-                left: 0,
-                ref: createRef<HTMLDivElement>()
-            },
-            {
-                id: 3,
-                title: "Title3",
-                order: 3,
-                left: 0,
-                ref: createRef<HTMLDivElement>()
-            },
-        ],
+        characters: characters
     }
 
-    updateOrder = (left: number, id: number) => {
+    updateOrder = () => {
+
+    }
+
+    updateOrderManual = (left: number, id: number) => {
         const newCharacters = this.state.characters
             .map((character: CharacterType) => {
                 if (character.id === id) {
@@ -78,10 +54,10 @@ class Fight extends React.Component<{}, FightState>  {
         this.setState({
             isDragging: true
         });
-        event.currentTarget.setAttribute('style', 
+        event.currentTarget.parentElement?.setAttribute('style', 
             `top: ${event.clientY}px; left: ${event.clientX}px;`
         );
-        event.currentTarget.classList.add(styles.dragging);
+        event.currentTarget.parentElement?.classList.add(styles.dragging);
     }
 
     onMouseUp = (event: React.MouseEvent, id: number) => {
@@ -92,8 +68,7 @@ class Fight extends React.Component<{}, FightState>  {
             `top: 0px; left: 0px;`
         );
         event.currentTarget.classList.remove(styles.dragging);
-        this.updateOrder(event.clientX, id);
-        
+        this.updateOrderManual(event.clientX, id);
     }
 
     renderCharacter = (character: CharacterType, key: number) => 
@@ -101,14 +76,18 @@ class Fight extends React.Component<{}, FightState>  {
             key={key} 
             xs={{ order: character.order }} 
             md="auto"
-            ref={character.ref}
-            onMouseDown={this.onMouseDown} 
+            ref={character.ref}                      
             onMouseUp={(event: React.MouseEvent) => this.onMouseUp(event, character.id)}
-            onMouseMove={this.onDrag}                        
+            onMouseMove={this.onDrag}
         >
+            <div className={styles.dragbar}
+                onMouseDown={this.onMouseDown}   
+            >
+            </div>
             <Character          
                 name={character.title}
-                initiative={10}
+                attributes = {character.attributes}
+                onInitiativeChange = {this.updateOrder}
             />
         </Col>
 

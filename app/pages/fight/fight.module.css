@@ -5,7 +5,12 @@
 .dragging {
     position: fixed;
     z-index: 10;
-    background: gray;
+    background: rgb(212, 182, 182);
     transform: translate(-50%, -50%);
     box-shadow: 2px 2px outset;
+}
+
+.dragbar {
+    height: 1rem;
+    background: lightgray;
 }
