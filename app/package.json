@@ -5,6 +5,7 @@
         "start": "next start"
     },
     "dependencies": {
+        "mongoose": "latest",
         "next": "latest",
         "react": "latest",
         "react-dom": "latest",
@@ -15,6 +16,7 @@
         "typescript": "latest",
         "@types/react": "latest",
         "@types/node": "latest",
-        "@types/react-bootstrap": "latest"
+        "@types/react-bootstrap": "latest",
+        "@types/mongoose": "latest"
     }
 }

@@ -1,5 +1,7 @@
+import mongoose from 'mongoose';
 import Character from "../components/character/Character";
 import charactersFixture from "../fictures/characters";
+import CharacterModel, { ICharacter } from '../model/CharacterModel';
 
 export type Attributes = {
     Mut: number,
@@ -100,6 +102,24 @@ class CharacterService
 
     getCharacters(): Array<BlankCharacterType> {
         return this.characters;
+    }
+
+    async getCharactersFromDb(): Promise<Array<BlankCharacterType>> {
+        return new Promise<Array<BlankCharacterType>>((resolve, reject) => {
+            const client = mongoose.connect('mongodb://db/dsa', {useNewUrlParser: true})
+            .then((db) => {
+                CharacterModel.find()
+                .then((entries) => {
+                    resolve(entries.map((entry: ICharacter): BlankCharacterType => ({
+                        id: entry._id,
+                        title: entry.name,
+                        attributes: entry.primaryAttributes,
+                    })))
+                })
+                .catch(err => reject(err))
+            })
+            .catch(err => reject(err));
+        })
     }
 
     calculateSecondaryStats(character: BlankCharacterType) {

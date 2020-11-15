@@ -4,6 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import styles from './fight.module.css';
 import characters from '../../fictures/characters';
 import CharacterService, { BlankCharacterType, CharacterType } from '../../services/CharacterService';
+import { ICharacter } from '../../model/CharacterModel';
 
 type CharacterEntry = {
         order: number,
@@ -17,18 +18,21 @@ type FightState = {
     characters: Array<CharacterEntry>
 };
 
-class Fight extends React.Component<{}, FightState>  {
+type FightProps = {
+    characters: Array<BlankCharacterType>
+}
+
+class Fight extends React.Component<FightProps, FightState>  {
     state = {
         isDragging: false,
         characters: new Array<CharacterEntry>(),
     }
-
     characterService: CharacterService;
 
-    constructor(props: {}) {
+    constructor(props: FightProps) {
         super(props);
         this.characterService = new CharacterService();
-        this.state.characters = this.characterService.getCharacters() 
+        this.state.characters = this.props.characters
             .map((character: BlankCharacterType) => ({
                 data: character,
                 order: 20 - this.characterService.getInitiative(character.id),
@@ -134,4 +138,16 @@ class Fight extends React.Component<{}, FightState>  {
     }
 }
 
+export async function getServerSideProps() {
+    // Fetch data from external db
+    const characterService = new CharacterService();
+
+    // Pass data to the page via props
+    return { 
+        props: { 
+            characters: characterService.getCharactersFromDb()
+        } 
+    }
+}
+  
 export default Fight;
