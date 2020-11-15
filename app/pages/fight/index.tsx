@@ -2,7 +2,7 @@ import React, { createRef } from 'react';
 import Character, { onChangeParameter } from '../../components/character/Character';
 import { Col, Container, Row } from 'react-bootstrap';
 import styles from './fight.module.css';
-import characters from '../../fictures/characters';
+import characters from '../../fixtures/characters';
 import CharacterService, { BlankCharacterType, CharacterType } from '../../services/CharacterService';
 import { ICharacter } from '../../model/CharacterModel';
 
@@ -145,7 +145,7 @@ export async function getServerSideProps() {
     // Pass data to the page via props
     return { 
         props: { 
-            characters: characterService.getCharactersFromDb()
+            characters: await characterService.getCharactersFromDb()
         } 
     }
 }

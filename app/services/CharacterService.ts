@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Character from "../components/character/Character";
-import charactersFixture from "../fictures/characters";
+import charactersFixture from "../fixtures/characters";
 import CharacterModel, { ICharacter } from '../model/CharacterModel';
 
 export type Attributes = {

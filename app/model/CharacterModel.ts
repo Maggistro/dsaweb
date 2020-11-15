@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose"
+import mongoose, { Document, mongo, Schema } from "mongoose"
 import { SecondaryAttributes } from "../services/CharacterService";
 
 export type Attributes = {
@@ -44,4 +44,8 @@ const schema: Schema = new Schema({
     }
 })
 
-export default mongoose.model<ICharacter>('Character', schema);
+const CharacterModel = mongoose.models && mongoose.models.Character 
+    ? mongoose.model<ICharacter>('Character') 
+    : mongoose.model<ICharacter>('Character', schema);
+
+export default CharacterModel;

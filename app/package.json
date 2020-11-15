@@ -2,7 +2,8 @@
     "scripts": {
         "dev": "npm install && next",
         "build": "next build",
-        "start": "next start"
+        "start": "next start",
+        "seed": "node fixtures/seeder.js"
     },
     "dependencies": {
         "mongoose": "latest",
@@ -10,7 +11,8 @@
         "react": "latest",
         "react-dom": "latest",
         "react-bootstrap": "latest",
-        "bootstrap": "latest"
+        "bootstrap": "latest",
+        "ts-node": "latest"
     },
     "devDependencies": {
         "typescript": "latest",
