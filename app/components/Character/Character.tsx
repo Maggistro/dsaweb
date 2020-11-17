@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormControl, FormGroup, FormLabel, InputGroup } from 'react-bootstrap';
-import CharacterService, { Attributes, BlankCharacterType, CharacterType, SecondaryAttributes } from '../../services/CharacterService';
+import { FormControl, FormGroup, FormLabel } from 'react-bootstrap';
+import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
 import styles from './Character.module.css';
 
 type State = {
@@ -35,7 +35,7 @@ class Character extends React.Component<Props, State> {
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = parseInt(event.target.value, 10); 
+        const newValue = parseInt(event.target.value, 10);
         this.setState({
             initiativeModifier: newValue
         });
@@ -60,8 +60,8 @@ class Character extends React.Component<Props, State> {
                     Initiative Modifier
                 </FormLabel>
                 <FormControl
-                    onChange={this.handleChange} 
-                    type="number" 
+                    onChange={this.handleChange}
+                    type="number"
                     value={this.state.initiativeModifier}
                 />
             </FormGroup>

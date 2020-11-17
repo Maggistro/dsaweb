@@ -1,21 +1,21 @@
 version: "3.0"
-services: 
+services:
   app:
     build: app/
-    volumes: 
+    volumes:
       - ./app:/usr/src/app
     command: npm run dev
     environment:
       - CHOKIDAR_USEPOLLING=true
-    ports: 
+    ports:
       - 80:3000
+      - 9229:9229
   db:
     image: 'mongo'
-    volumes: 
+    volumes:
       - dbdata:/data/db
-    ports: 
+    ports:
       - 27017:27017
 
-volumes: 
+volumes:
   dbdata:
-    

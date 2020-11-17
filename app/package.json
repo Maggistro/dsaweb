@@ -2,7 +2,7 @@
     "scripts": {
         "dev": "npm install && next",
         "build": "next build",
-        "start": "next start",
+        "start": "npm run build && next start",
         "seed": "node fixtures/seeder.js"
     },
     "dependencies": {

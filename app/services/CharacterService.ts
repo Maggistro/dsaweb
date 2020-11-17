@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Character from "../components/character/Character";
+import Character from "../components/Character/Character";
 import charactersFixture from "../fixtures/characters";
 import CharacterModel, { ICharacter } from '../model/CharacterModel';
 
@@ -11,7 +11,7 @@ export type Attributes = {
     Fingerfertigkeit: number,
     Gewandheit: number,
     Konstitutiokn: number,
-    Koerperkraft: number    
+    Koerperkraft: number
 }
 
 export type ModifyParameter = {
@@ -39,7 +39,7 @@ export type SecondaryAttributes = {
 }
 
 export type BlankCharacterType = {
-    id: number, 
+    id: number,
     title: string,
     attributes: Attributes
 }
@@ -56,22 +56,22 @@ type ExtendedCharacterType = CharacterType & {
 };
 
 
-class CharacterService 
+class CharacterService
 {
     static instance: CharacterService;
 
     private characters: Array<ExtendedCharacterType> = [];
 
-    constructor() {
+    constructor(characters: Array<BlankCharacterType> = []) {
         if (!CharacterService.instance) {
             CharacterService.instance = this;
-            this.initData();
+            this.initData(characters);
         }
         return CharacterService.instance;
     }
 
-    initData() {
-        this.characters = charactersFixture.map((character: BlankCharacterType) => ({
+    initData(characters: Array<BlankCharacterType>) {
+        this.characters = (characters.length > 0 ? characters : charactersFixture).map((character: BlankCharacterType) => ({
             ...character,
             secondaryAttributes: this.calculateSecondaryStats(character),
             modification: {
@@ -83,7 +83,7 @@ class CharacterService
                     Fingerfertigkeit: 0,
                     Gewandheit: 0,
                     Konstitutiokn: 0,
-                    Koerperkraft: 0  
+                    Koerperkraft: 0
                 },
                 secondary: {
                     Lebensenergie: 0,
@@ -124,7 +124,7 @@ class CharacterService
 
     calculateSecondaryStats(character: BlankCharacterType) {
         return {
-            Lebensenergie: 0, // TODO 
+            Lebensenergie: 0, // TODO
             Astralenergie: 0, // TODO 20/Zauberer + Leiteigenschaft
             Karmaenergie: 0, // TODO 20/Geweit + Leiteigenschaft
             Seelenkraft: 0, // TODO GW spezies + (Mut + Klugheit + Intuition)/6
@@ -139,7 +139,7 @@ class CharacterService
     getInitiative(id: number): number {
         const character = this.characters.find((entry) => entry.id === id );
         if (!character) return 0;
-        return character.secondaryAttributes.Initiative + character.modification.secondary.Initiative; 
+        return character.secondaryAttributes.Initiative + character.modification.secondary.Initiative;
     }
 
     modifySecondary = (id: number, modification: ModifyParameter) => {

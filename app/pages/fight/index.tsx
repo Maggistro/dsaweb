@@ -1,10 +1,8 @@
 import React, { createRef } from 'react';
-import Character, { onChangeParameter } from '../../components/character/Character';
 import { Col, Container, Row } from 'react-bootstrap';
+import Character, { onChangeParameter } from '../../components/Character/Character';
+import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
 import styles from './fight.module.css';
-import characters from '../../fixtures/characters';
-import CharacterService, { BlankCharacterType, CharacterType } from '../../services/CharacterService';
-import { ICharacter } from '../../model/CharacterModel';
 
 type CharacterEntry = {
         order: number,
@@ -31,7 +29,7 @@ class Fight extends React.Component<FightProps, FightState>  {
 
     constructor(props: FightProps) {
         super(props);
-        this.characterService = new CharacterService();
+        this.characterService = new CharacterService(props.characters);
         this.state.characters = this.props.characters
             .map((character: BlankCharacterType) => ({
                 data: character,
@@ -73,10 +71,10 @@ class Fight extends React.Component<FightProps, FightState>  {
                 characters: newCharacters
             });
     }
-    
+
     onDrag = (event: React.MouseEvent) => {
         if (this.state.isDragging) {
-            event.currentTarget.setAttribute('style', 
+            event.currentTarget.setAttribute('style',
                 `top: ${event.clientY}px; left: ${event.clientX}px;`
             );
         }
@@ -86,7 +84,7 @@ class Fight extends React.Component<FightProps, FightState>  {
         this.setState({
             isDragging: true
         });
-        event.currentTarget.parentElement?.setAttribute('style', 
+        event.currentTarget.parentElement?.setAttribute('style',
             `top: ${event.clientY}px; left: ${event.clientX}px;`
         );
         event.currentTarget.parentElement?.classList.add(styles.dragging);
@@ -97,28 +95,28 @@ class Fight extends React.Component<FightProps, FightState>  {
             this.setState({
                 isDragging: false
             });
-            event.currentTarget.setAttribute('style', 
+            event.currentTarget.setAttribute('style',
                 `top: 0px; left: 0px;`
             );
             event.currentTarget.classList.remove(styles.dragging);
-            this.updateOrderManual(event.clientX, id);    
+            this.updateOrderManual(event.clientX, id);
         }
     }
 
-    renderCharacter = (character: CharacterEntry, key: number) => 
+    renderCharacter = (character: CharacterEntry, key: number) =>
         <Col
-            key={key} 
-            xs={{ order: character.order }} 
+            key={key}
+            xs={{ order: character.order }}
             md="auto"
-            ref={character.ref}                      
+            ref={character.ref}
             onMouseUp={(event: React.MouseEvent) => this.onMouseUp(event, character.data.id)}
             onMouseMove={this.onDrag}
         >
             <div className={styles.dragbar}
-                onMouseDown={this.onMouseDown}   
+                onMouseDown={this.onMouseDown}
             >
             </div>
-            <Character          
+            <Character
                 {...character.data}
                 onDataChange={this.updateOrder}
             />
@@ -141,13 +139,14 @@ class Fight extends React.Component<FightProps, FightState>  {
 export async function getServerSideProps() {
     // Fetch data from external db
     const characterService = new CharacterService();
+    const characters = await characterService.getCharactersFromDb();
 
     // Pass data to the page via props
-    return { 
-        props: { 
-            characters: await characterService.getCharactersFromDb()
-        } 
+    return {
+        props: {
+            characters: characters || []
+        }
     }
 }
-  
+
 export default Fight;
