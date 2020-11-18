@@ -19,7 +19,26 @@ class ApiService {
             },
         })
         if (response.status === 200) {
-            const character = await response.json() as CharacterType;
+            const character = await response.json();
+            character.id = character._id;
+            return Promise.resolve(character);
+        }
+
+        const error = await response.json() as ErrorResponse;
+        return Promise.reject(error.message);
+    }
+
+    async updateCharacter(id: string, character: NewCharacterType): Promise<CharacterType> {
+        const response = await fetch(`/api/character/${id}`, {
+            method: 'POST',
+            body: JSON.stringify(character),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        if (response.status === 200) {
+            const character = await response.json();
+            character.id = character._id;
             return Promise.resolve(character);
         }
 

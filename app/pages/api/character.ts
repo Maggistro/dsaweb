@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 type CharacterInsertBody = {
     name: string,
-    attributes: PrimaryAttributes
+    primaryAttributes: PrimaryAttributes
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,11 +15,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             const data = req.body as CharacterInsertBody;
             const character = {
                 name: data.name,
-                primaryAttributes: data.attributes,
+                primaryAttributes: data.primaryAttributes,
                 secondaryAttributes: characterService.calculateSecondaryStats({
-                    id: 0,
+                    id: "0",
                     name: data.name,
-                    attributes: data.attributes
+                    primaryAttributes: data.primaryAttributes
                 })
             } as ICharacter
 

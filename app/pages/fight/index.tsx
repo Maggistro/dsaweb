@@ -1,10 +1,11 @@
 import React, { createRef } from 'react';
 import { BsPlusCircle } from "react-icons/bs";
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import Character, { onChangeParameter } from '../../components/Character/Character';
+import CharacterCard, { onChangeParameter } from '../../components/CharacterCard/CharacterCard';
 import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
 import styles from './fight.module.css';
-import AddCharacterModal from '../../components/AddCharacterModal/AddCharacterModal';
+import AddCharacterModal from '../../components/Modal/AddCharacterModal/AddCharacterModal';
+import UpdateCharacterModal from '../../components/Modal/UpdateCharacterModal/UpdateCharacterModal';
 
 type CharacterEntry = {
         order: number,
@@ -16,6 +17,8 @@ type CharacterEntry = {
 type FightState = {
     isDragging: boolean,
     showCharacterModal: boolean,
+    showCharacterUpdateModal: boolean,
+    selectedCharacterId: string,
     characters: Array<CharacterEntry>
 };
 
@@ -27,6 +30,8 @@ class Fight extends React.Component<FightProps, FightState>  {
     state = {
         isDragging: false,
         showCharacterModal: false,
+        showCharacterUpdateModal: false,
+        selectedCharacterId: "",
         characters: new Array<CharacterEntry>(),
     }
     characterService: CharacterService;
@@ -60,7 +65,7 @@ class Fight extends React.Component<FightProps, FightState>  {
         });
     }
 
-    updateOrderManual = (left: number, id: number) => {
+    updateOrderManual = (left: number, id: string) => {
         const newCharacters = this.state.characters
             .map((character: CharacterEntry) => {
                 if (character.data.id === id) {
@@ -99,7 +104,7 @@ class Fight extends React.Component<FightProps, FightState>  {
         event.currentTarget.parentElement?.classList.add(styles.dragging);
     }
 
-    onMouseUp = (event: React.MouseEvent, id: number) => {
+    onMouseUp = (event: React.MouseEvent, id: string) => {
         if (this.state.isDragging) {
             this.setState({
                 isDragging: false
@@ -118,6 +123,13 @@ class Fight extends React.Component<FightProps, FightState>  {
         });
     }
 
+    toggleCharacterUpdateModal = (id: string) => {
+        this.setState({
+            selectedCharacterId: id,
+            showCharacterUpdateModal: !this.state.showCharacterUpdateModal
+        });
+    }
+
     renderCharacter = (character: CharacterEntry, key: number) =>
         <Col
             key={key}
@@ -131,9 +143,10 @@ class Fight extends React.Component<FightProps, FightState>  {
                 onMouseDown={this.onMouseDown}
             >
             </div>
-            <Character
+            <CharacterCard
                 {...character.data}
                 onDataChange={this.updateOrder}
+                onUpdate={this.toggleCharacterUpdateModal}
             />
         </Col>
 
@@ -145,6 +158,13 @@ class Fight extends React.Component<FightProps, FightState>  {
                     onSubmit={this.toggleCharacterModal}
                     characterService={this.characterService}
                     onHide={this.toggleCharacterModal}
+                />
+                <UpdateCharacterModal
+                    id={this.state.selectedCharacterId}
+                    show={this.state.showCharacterUpdateModal}
+                    onSubmit={this.toggleCharacterUpdateModal}
+                    characterService={this.characterService}
+                    onHide={this.toggleCharacterUpdateModal}
                 />
                 <h3>Kampfreihenfolge</h3>
                 <Container>

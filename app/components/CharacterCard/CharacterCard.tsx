@@ -1,14 +1,15 @@
 import React from 'react';
-import { FormControl, FormGroup, FormLabel } from 'react-bootstrap';
+import { Button, FormControl, FormGroup, FormLabel } from 'react-bootstrap';
 import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
-import styles from './Character.module.css';
+import styles from './CharacterCard.module.css';
 
 type State = {
     initiativeModifier: number
 }
 
 type Props = BlankCharacterType & {
-    onDataChange: Function
+    onDataChange: Function,
+    onUpdate: Function
 }
 
 export type onChangeParameter = {
@@ -16,7 +17,7 @@ export type onChangeParameter = {
     Initiative?: number
 }
 
-class Character extends React.Component<Props, State> {
+class CharacterCard extends React.Component<Props, State> {
 
     characterService: CharacterService;
 
@@ -65,8 +66,11 @@ class Character extends React.Component<Props, State> {
                     value={this.state.initiativeModifier}
                 />
             </FormGroup>
+            <Button onClick={() => this.props.onUpdate(this.props.id)}>
+                Update
+            </Button>
         </div>
     }
 }
 
-export default Character;
+export default CharacterCard;

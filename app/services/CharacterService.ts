@@ -40,11 +40,11 @@ export type SecondaryAttributes = {
 
 export type NewCharacterType = {
     name: string,
-    attributes: PrimaryAttributes
+    primaryAttributes: PrimaryAttributes
 }
 
 export type BlankCharacterType = NewCharacterType & {
-    id: number
+    id: string
 }
 
 export type CharacterType = BlankCharacterType & {
@@ -84,6 +84,16 @@ class CharacterService
         .then((newCharacter: CharacterType) => {
             this.characters.push(this.extendCharacter(newCharacter));
             return "Character added";
+        })
+        .catch((reason) => reason.toString())
+    }
+
+    async updateCharacter(id: string, character: NewCharacterType): Promise<string> {
+        return this.apiService.updateCharacter(id, character)
+        .then((updatedCharacter: CharacterType) => {
+            this.characters = this.characters.filter((entry: CharacterType) => entry.id !== id);
+            this.characters.push(this.extendCharacter(updatedCharacter));
+            return "Character updated";
         })
         .catch((reason) => reason.toString())
     }
@@ -147,8 +157,12 @@ class CharacterService
         }
     }
 
-    getCharacters(): Array<ExtendedCharacterType> {
+    getCharacters(): Array<CharacterType> {
         return this.characters;
+    }
+
+    getCharacter(id: string): CharacterType | undefined {
+        return this.characters.find(entry => entry.id === id);
     }
 
     async getCharactersFromDb(): Promise<Array<BlankCharacterType>> {
@@ -160,7 +174,7 @@ class CharacterService
                     resolve(entries.map((entry: ICharacter): BlankCharacterType => ({
                         id: entry._id.toString(),
                         name: entry.name,
-                        attributes: (entry.primaryAttributes as any as Document).toObject(),
+                        primaryAttributes: (entry.primaryAttributes as any as Document).toObject(),
                     })))
                 })
                 .catch(err => reject(err))
@@ -176,20 +190,20 @@ class CharacterService
             Karmaenergie: 0, // TODO 20/Geweit + Leiteigenschaft
             Seelenkraft: 0, // TODO GW spezies + (Mut + Klugheit + Intuition)/6
             Zaehigkeit: 9, // TODO GW spezies + (Konstituion + Konstitution + Koerperkraft)/6
-            Ausweichen: character.attributes.Gewandheit / 2,
-            Initiative: (character.attributes.Mut + character.attributes.Gewandheit) / 2,
+            Ausweichen: character.primaryAttributes.Gewandheit / 2,
+            Initiative: (character.primaryAttributes.Mut + character.primaryAttributes.Gewandheit) / 2,
             Geschwindigkeit: 0, // TODO Gw spezies ( einbeinig )
-            Wundschwelle: character.attributes.Konstitution / 2
+            Wundschwelle: character.primaryAttributes.Konstitution / 2
         }
     }
 
-    getInitiative(id: number): number {
+    getInitiative(id: string): number {
         const character = this.characters.find((entry) => entry.id === id );
         if (!character) return 0;
         return character.secondaryAttributes.Initiative + character.modification.secondary.Initiative;
     }
 
-    modifySecondary = (id: number, modification: ModifyParameter) => {
+    modifySecondary = (id: string, modification: ModifyParameter) => {
         const character = this.characters.find((entry) => entry.id === id );
         if (!character) return 0;
         character.modification.secondary = {

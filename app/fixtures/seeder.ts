@@ -8,7 +8,7 @@ function seedCharacters() {
     const models = characters.map((character) => {
         const model = new CharacterModel({
             name: character.title,
-            primaryAttributes: character.attributes,
+            primaryAttributes: character.primaryAttributes,
         });
         model.secondaryAttributes = characterService.calculateSecondaryStats(character);
         return model;
