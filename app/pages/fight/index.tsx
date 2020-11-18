@@ -34,14 +34,19 @@ class Fight extends React.Component<FightProps, FightState>  {
     constructor(props: FightProps) {
         super(props);
         this.characterService = new CharacterService(props.characters);
-        this.state.characters = this.props.characters
-            .map((character: BlankCharacterType) => ({
-                data: character,
-                order: 20 - this.characterService.getInitiative(character.id),
-                left: 0,
-                ref: createRef<HTMLDivElement>()
-            })
-        );
+    }
+
+    componentDidMount() {
+        this.setState({
+            characters: this.props.characters
+                .map((character: BlankCharacterType) => ({
+                    data: character,
+                    order: 20 - this.characterService.getInitiative(character.id),
+                    left: 0,
+                    ref: createRef<HTMLDivElement>()
+                })
+            )
+        });
     }
 
     updateOrder = (data: onChangeParameter) => {
