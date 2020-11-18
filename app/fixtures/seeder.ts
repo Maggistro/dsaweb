@@ -20,7 +20,7 @@ function seedCharacters() {
 }
 
 async function seeder(){
-    const client = await mongoose.connect('mongodb://db/dsa', { useNewUrlParser: true });
+    const client = await mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}` , { useNewUrlParser: true });
     seedCharacters();
 }
 

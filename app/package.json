@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "dev": "npm install && next",
+        "dev": "npm install && NODE_OPTIONS='--inspect=0.0.0.0' next",
         "build": "next build",
         "start": "npm run build && next start",
         "seed": "node fixtures/seeder.js"

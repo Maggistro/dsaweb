@@ -8,13 +8,13 @@ export type Attributes = {
     Charisma: number,
     Fingerfertigkeit: number,
     Gewandheit: number,
-    Konstitutiokn: number,
-    Koerperkraft: number    
+    Konstitution: number,
+    Koerperkraft: number
 }
 
 export interface ICharacter extends Document {
     name: string,
-    primaryAttributes: Attributes,    
+    primaryAttributes: Attributes,
     secondaryAttributes: SecondaryAttributes
 }
 
@@ -40,12 +40,12 @@ const schema: Schema = new Schema({
         Ausweichen: { type: Number },
         Initiative: { type: Number },
         Geschwindigkeit: { type: Number },
-        Wundschwelle: { type: Number }           
+        Wundschwelle: { type: Number }
     }
 })
 
-const CharacterModel = mongoose.models && mongoose.models.Character 
-    ? mongoose.model<ICharacter>('Character') 
+const CharacterModel = mongoose.models && mongoose.models.Character
+    ? mongoose.model<ICharacter>('Character')
     : mongoose.model<ICharacter>('Character', schema);
 
 export default CharacterModel;

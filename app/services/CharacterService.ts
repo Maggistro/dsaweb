@@ -1,18 +1,6 @@
 import mongoose from 'mongoose';
-import Character from "../components/Character/Character";
 import charactersFixture from "../fixtures/characters";
-import CharacterModel, { ICharacter } from '../model/CharacterModel';
-
-export type Attributes = {
-    Mut: number,
-    Klugheit: number,
-    Intuition: number,
-    Charisma: number,
-    Fingerfertigkeit: number,
-    Gewandheit: number,
-    Konstitutiokn: number,
-    Koerperkraft: number
-}
+import CharacterModel, { Attributes, ICharacter } from '../model/CharacterModel';
 
 export type ModifyParameter = {
     Lebensenergie?: number,
@@ -82,7 +70,7 @@ class CharacterService
                     Charisma: 0,
                     Fingerfertigkeit: 0,
                     Gewandheit: 0,
-                    Konstitutiokn: 0,
+                    Konstitution: 0,
                     Koerperkraft: 0
                 },
                 secondary: {
@@ -106,14 +94,15 @@ class CharacterService
 
     async getCharactersFromDb(): Promise<Array<BlankCharacterType>> {
         return new Promise<Array<BlankCharacterType>>((resolve, reject) => {
-            const client = mongoose.connect('mongodb://db/dsa', {useNewUrlParser: true})
+            const client = mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, {useNewUrlParser: true})
             .then((db) => {
                 CharacterModel.find()
                 .then((entries) => {
+                    debugger;
                     resolve(entries.map((entry: ICharacter): BlankCharacterType => ({
-                        id: entry._id,
+                        id: entry._id.toString(),
                         title: entry.name,
-                        attributes: entry.primaryAttributes,
+                        attributes: entry.primaryAttributes.toObject(),
                     })))
                 })
                 .catch(err => reject(err))
@@ -132,7 +121,7 @@ class CharacterService
             Ausweichen: character.attributes.Gewandheit / 2,
             Initiative: (character.attributes.Mut + character.attributes.Gewandheit) / 2,
             Geschwindigkeit: 0, // TODO Gw spezies ( einbeinig )
-            Wundschwelle: character.attributes.Konstitutiokn / 2
+            Wundschwelle: character.attributes.Konstitution / 2
         }
     }
 
