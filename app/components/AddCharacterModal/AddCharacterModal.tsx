@@ -1,17 +1,22 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
-import { ModalProps, Toast } from 'react-bootstrap';
+import { CloseButton, ModalProps, Toast } from 'react-bootstrap';
 import { Button, Form, FormControl, FormGroup, FormLabel, FormText, Modal } from 'react-bootstrap';
-import { PrimaryAttributes } from '../../services/CharacterService';
+import CharacterService, { PrimaryAttributes } from '../../services/CharacterService';
 
 type State = {
     name: string,
-    attributes: PrimaryAttributes
+    attributes: PrimaryAttributes,
+    error: string
 }
 
-class AddCharacterModal extends React.Component<ModalProps, State> {
+type Props = ModalProps & {
+    characterService: CharacterService,
+}
+
+class AddCharacterModal extends React.Component<Props, State> {
 
     state = {
-        name: "",
+        name: '',
         attributes: {
             Mut: 0,
             Klugheit: 0,
@@ -21,34 +26,42 @@ class AddCharacterModal extends React.Component<ModalProps, State> {
             Gewandheit: 0,
             Konstitution: 0,
             Koerperkraft: 0
-        }
-    }
-
-    onFieldChange = (field: string, value: string|number) => {
-
+        },
+        error: ''
     }
 
     handleCharacterSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-        const response = await fetch('/api/character', {
-            method: 'PUT',
-            body: JSON.stringify(this.state),
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        const button = event.currentTarget;
+        button.classList.add('disabled');
+        const result = await this.props.characterService.addCharacter({
+            name: this.state.name,
+            attributes: this.state.attributes
+        })
+        this.setState({
+            error: result
         });
-        if (response.status !== 200) console.error(response);
+        button.classList.remove('disabled');
+        // this.props.onSubmit();
         event.preventDefault();
     }
 
     render() {
         return <Modal {...this.props}>
+            <div>
+                <CloseButton onClick={this.props.onHide}></CloseButton>
+            </div>
+            <div className='error'>{this.state.error}</div>
             <Form>
                 <FormGroup>
                     <FormLabel>Name</FormLabel>
                     <FormControl type="text"
                         placeholder="Jon Doe"
                         value={this.state.name}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({name: event.currentTarget.value})}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { name :event.currentTarget.value }
+                        ))}/>
                     <FormText>
                         Full Character name
                     </FormText>
@@ -58,80 +71,88 @@ class AddCharacterModal extends React.Component<ModalProps, State> {
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Mut}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Mut: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Mut: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Klugheit</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Klugheit}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Klugheit: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Klugheit: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Intuition</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Intuition}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Intuition: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Intuition: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Charisma</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Charisma}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Charisma: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Charisma: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Fingerfertigkeit</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Fingerfertigkeit}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Fingerfertigkeit: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Fingerfertigkeit: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Gewandheit</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Gewandheit}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Gewandheit: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Gewandheit: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Konstitution</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Konstitution}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Konstitution: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Konstitution: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <FormGroup>
                     <FormLabel>Koerperkraft</FormLabel>
                     <FormControl type="number"
                         placeholder="0"
                         value={this.state.attributes.Koerperkraft}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState({ attributes: {
-                            ...this.state.attributes,
-                            Koerperkraft: parseInt(event.currentTarget.value, 10) }
-                        })}/>
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => this.setState(Object.assign(
+                            {},
+                            this.state,
+                            { attributes: { ...this.state.attributes, Koerperkraft: parseInt(event.currentTarget.value, 10) }}
+                        ))}/>
                 </FormGroup>
                 <Button variant="primary" onClick={this.handleCharacterSubmit} >
                     Send

@@ -9,7 +9,7 @@ export interface ICharacter extends Document {
 
 const schema: Schema = new Schema({
     id: String,
-    name: String,
+    name: { type: String, unique: true },
     primaryAttributes: {
         Mut: { type: Number },
         Klugheit: { type: Number },

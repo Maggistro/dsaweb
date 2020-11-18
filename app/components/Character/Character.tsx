@@ -51,7 +51,7 @@ class Character extends React.Component<Props, State> {
 
     render() {
         return <div className={styles.character}>
-            <h3>{this.props.title}</h3>
+            <h3>{this.props.name}</h3>
             <div>
                 Initiative {this.characterService.getInitiative(this.props.id)}
             </div>

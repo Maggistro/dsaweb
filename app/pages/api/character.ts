@@ -18,15 +18,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                 primaryAttributes: data.attributes,
                 secondaryAttributes: characterService.calculateSecondaryStats({
                     id: 0,
-                    title: data.name,
+                    name: data.name,
                     attributes: data.attributes
                 })
             } as ICharacter
 
-            mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, {useNewUrlParser: true, useUnifiedTopology: true});
+            mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, {useNewUrlParser: true});
             const model = new CharacterModel(character);
-            model.save();
-            res.status(200).end();
+            model.save((err, doc) => {
+                if (err) return res.status(400).json({ message: `Character with name ${model.name} already exists`});
+                res.status(200).json(doc.toJSON());
+            });
             break;
        default:
             res.status(404).json({ message: `Unsupported method ${req.method}`})

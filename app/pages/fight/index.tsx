@@ -140,7 +140,12 @@ class Fight extends React.Component<FightProps, FightState>  {
     render() {
         return (
             <div className={styles.fight}>
-                <AddCharacterModal show={this.state.showCharacterModal} onHide={this.toggleCharacterModal}/>
+                <AddCharacterModal
+                    show={this.state.showCharacterModal}
+                    onSubmit={this.toggleCharacterModal}
+                    characterService={this.characterService}
+                    onHide={this.toggleCharacterModal}
+                />
                 <h3>Kampfreihenfolge</h3>
                 <Container>
                     <Row>

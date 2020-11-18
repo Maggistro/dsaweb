@@ -1,6 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import charactersFixture from "../fixtures/characters";
 import CharacterModel, { ICharacter } from '../model/CharacterModel';
+import ApiService from './ApiService';
 
 export type ModifyParameter = {
     Lebensenergie?: number,
@@ -37,10 +38,13 @@ export type SecondaryAttributes = {
     Wundschwelle: number
 }
 
-export type BlankCharacterType = {
-    id: number,
-    title: string,
+export type NewCharacterType = {
+    name: string,
     attributes: PrimaryAttributes
+}
+
+export type BlankCharacterType = NewCharacterType & {
+    id: number
 }
 
 export type CharacterType = BlankCharacterType & {
@@ -61,6 +65,8 @@ class CharacterService
 
     private characters: Array<ExtendedCharacterType> = [];
 
+    private apiService: ApiService = new ApiService();
+
     constructor(characters: Array<BlankCharacterType> = []) {
         if (!CharacterService.instance) {
             CharacterService.instance = this;
@@ -70,9 +76,21 @@ class CharacterService
     }
 
     initData(characters: Array<BlankCharacterType>) {
-        this.characters = (characters.length > 0 ? characters : charactersFixture).map((character: BlankCharacterType) => ({
+        this.characters = (characters.length > 0 ? characters : charactersFixture).map(this.extendBlankCharacter);;
+    }
+
+    async addCharacter(character: NewCharacterType): Promise<string> {
+        return this.apiService.addCharacter(character)
+        .then((newCharacter: CharacterType) => {
+            this.characters.push(this.extendCharacter(newCharacter));
+            return "Character added";
+        })
+        .catch((reason) => reason.toString())
+    }
+
+    extendCharacter = (character: CharacterType): ExtendedCharacterType => {
+        return {
             ...character,
-            secondaryAttributes: this.calculateSecondaryStats(character),
             modification: {
                 primary: {
                     Mut: 0,
@@ -96,21 +114,40 @@ class CharacterService
                     Wundschwelle: 0
                 }
             }
-        }));;
+        }
     }
 
-    async addCharacter(character: {}) {
-        const response = await fetch('/api/character', {
-            method: 'PUT',
-            body: JSON.stringify(character),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (response.status !== 200) console.error(response);
+    extendBlankCharacter = (blankCharacter: BlankCharacterType): ExtendedCharacterType => {
+        return {
+            ...blankCharacter,
+            secondaryAttributes: this.calculateSecondaryStats(blankCharacter),
+            modification: {
+                primary: {
+                    Mut: 0,
+                    Klugheit: 0,
+                    Intuition: 0,
+                    Charisma: 0,
+                    Fingerfertigkeit: 0,
+                    Gewandheit: 0,
+                    Konstitution: 0,
+                    Koerperkraft: 0
+                },
+                secondary: {
+                    Lebensenergie: 0,
+                    Astralenergie: 0,
+                    Karmaenergie: 0,
+                    Seelenkraft:0,
+                    Zaehigkeit: 0,
+                    Ausweichen: 0,
+                    Initiative: 0,
+                    Geschwindigkeit: 0,
+                    Wundschwelle: 0
+                }
+            }
+        }
     }
 
-    getCharacters(): Array<BlankCharacterType> {
+    getCharacters(): Array<ExtendedCharacterType> {
         return this.characters;
     }
 
@@ -122,7 +159,7 @@ class CharacterService
                 .then((entries) => {
                     resolve(entries.map((entry: ICharacter): BlankCharacterType => ({
                         id: entry._id.toString(),
-                        title: entry.name,
+                        name: entry.name,
                         attributes: (entry.primaryAttributes as any as Document).toObject(),
                     })))
                 })
