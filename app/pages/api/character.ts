@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import CharacterModel, { Attributes, ICharacter } from "../../model/CharacterModel";
-import CharacterService, { BlankCharacterType } from "../../services/CharacterService";
+import CharacterModel, { ICharacter } from "../../model/CharacterModel";
+import CharacterService, { BlankCharacterType, PrimaryAttributes } from "../../services/CharacterService";
 import mongoose from 'mongoose';
 
 type CharacterInsertBody = {
     name: string,
-    attributes: Attributes
+    attributes: PrimaryAttributes
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

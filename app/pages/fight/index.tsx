@@ -1,8 +1,10 @@
 import React, { createRef } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { BsPlusCircle } from "react-icons/bs";
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import Character, { onChangeParameter } from '../../components/Character/Character';
 import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
 import styles from './fight.module.css';
+import AddCharacterModal from '../../components/AddCharacterModal/AddCharacterModal';
 
 type CharacterEntry = {
         order: number,
@@ -13,6 +15,7 @@ type CharacterEntry = {
 
 type FightState = {
     isDragging: boolean,
+    showCharacterModal: boolean,
     characters: Array<CharacterEntry>
 };
 
@@ -23,6 +26,7 @@ type FightProps = {
 class Fight extends React.Component<FightProps, FightState>  {
     state = {
         isDragging: false,
+        showCharacterModal: false,
         characters: new Array<CharacterEntry>(),
     }
     characterService: CharacterService;
@@ -103,6 +107,12 @@ class Fight extends React.Component<FightProps, FightState>  {
         }
     }
 
+    toggleCharacterModal = () => {
+        this.setState({
+            showCharacterModal: !this.state.showCharacterModal
+        });
+    }
+
     renderCharacter = (character: CharacterEntry, key: number) =>
         <Col
             key={key}
@@ -125,9 +135,15 @@ class Fight extends React.Component<FightProps, FightState>  {
     render() {
         return (
             <div className={styles.fight}>
+                <AddCharacterModal show={this.state.showCharacterModal} onHide={this.toggleCharacterModal}/>
                 <h3>Kampfreihenfolge</h3>
                 <Container>
                     <Row>
+                        <Col md="auto">
+                            <Button onClick={this.toggleCharacterModal}>
+                                <BsPlusCircle/>
+                            </Button>
+                        </Col>
                         { this.state.characters.map(this.renderCharacter) }
                     </Row>
                 </Container>

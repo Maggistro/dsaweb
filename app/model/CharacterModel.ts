@@ -1,20 +1,9 @@
 import mongoose, { Document, mongo, Schema } from "mongoose"
-import { SecondaryAttributes } from "../services/CharacterService";
-
-export type Attributes = {
-    Mut: number,
-    Klugheit: number,
-    Intuition: number,
-    Charisma: number,
-    Fingerfertigkeit: number,
-    Gewandheit: number,
-    Konstitution: number,
-    Koerperkraft: number
-}
+import { PrimaryAttributes, SecondaryAttributes } from "../services/CharacterService";
 
 export interface ICharacter extends Document {
     name: string,
-    primaryAttributes: Attributes,
+    primaryAttributes: PrimaryAttributes,
     secondaryAttributes: SecondaryAttributes
 }
 

@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import charactersFixture from "../fixtures/characters";
-import CharacterModel, { Attributes, ICharacter } from '../model/CharacterModel';
+import CharacterModel, { ICharacter } from '../model/CharacterModel';
 
 export type ModifyParameter = {
     Lebensenergie?: number,
@@ -12,6 +12,17 @@ export type ModifyParameter = {
     Initiative?: number,
     Geschwindigkeit?: number,
     Wundschwelle?: number
+}
+
+export type PrimaryAttributes = {
+    Mut: number,
+    Klugheit: number,
+    Intuition: number,
+    Charisma: number,
+    Fingerfertigkeit: number,
+    Gewandheit: number,
+    Konstitution: number,
+    Koerperkraft: number
 }
 
 export type SecondaryAttributes = {
@@ -29,7 +40,7 @@ export type SecondaryAttributes = {
 export type BlankCharacterType = {
     id: number,
     title: string,
-    attributes: Attributes
+    attributes: PrimaryAttributes
 }
 
 export type CharacterType = BlankCharacterType & {
@@ -38,7 +49,7 @@ export type CharacterType = BlankCharacterType & {
 
 type ExtendedCharacterType = CharacterType & {
     modification: {
-        primary: Attributes,
+        primary: PrimaryAttributes,
         secondary: SecondaryAttributes
     }
 };
@@ -88,6 +99,17 @@ class CharacterService
         }));;
     }
 
+    async addCharacter(character: {}) {
+        const response = await fetch('/api/character', {
+            method: 'PUT',
+            body: JSON.stringify(character),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.status !== 200) console.error(response);
+    }
+
     getCharacters(): Array<BlankCharacterType> {
         return this.characters;
     }
@@ -98,11 +120,10 @@ class CharacterService
             .then((db) => {
                 CharacterModel.find()
                 .then((entries) => {
-                    debugger;
                     resolve(entries.map((entry: ICharacter): BlankCharacterType => ({
                         id: entry._id.toString(),
                         title: entry.name,
-                        attributes: entry.primaryAttributes.toObject(),
+                        attributes: (entry.primaryAttributes as any as Document).toObject(),
                     })))
                 })
                 .catch(err => reject(err))
