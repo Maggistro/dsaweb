@@ -9,11 +9,10 @@ const nextHandler = nextApp.getRequestHandler();
 let port = 3000;
 
 nextApp.prepare().then(() => {
-    app.get('*', (req, res) => {
+    app.all('*', (req, res) => {
         req.server = server;
         return nextHandler(req, res)
     });
-
     server.listen(port, () => {
         console.log(`> Ready on http://localhost:${port}`);
     });
