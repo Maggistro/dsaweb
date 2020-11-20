@@ -19,7 +19,7 @@ class AddCharacterModal extends React.Component<Props, State> {
     }
 
     handleCharacterSubmit = async (character: NewCharacterType) => {
-        const result = await this.props.characterService.updateCharacter(this.props.id, character);
+        const result = await this.props.characterService.addCharacter(character);
         this.setState({
             message: result
         });
