@@ -1,11 +1,12 @@
 import React, { createRef } from 'react';
 import { BsPlusCircle } from "react-icons/bs";
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Nav, Row } from 'react-bootstrap';
 import CharacterCard, { onChangeParameter } from '../../components/CharacterCard/CharacterCard';
 import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
 import styles from './fight.module.css';
 import AddCharacterModal from '../../components/Modal/AddCharacterModal/AddCharacterModal';
 import UpdateCharacterModal from '../../components/Modal/UpdateCharacterModal/UpdateCharacterModal';
+import Navbar from '../../components/Navbar/Navbar';
 
 type CharacterEntry = {
         order: number,
@@ -152,32 +153,34 @@ class Fight extends React.Component<FightProps, FightState>  {
 
     render() {
         return (
-            <div className={styles.fight}>
-                <AddCharacterModal
-                    show={this.state.showCharacterModal}
-                    onSubmit={this.toggleCharacterModal}
-                    characterService={this.characterService}
-                    onHide={this.toggleCharacterModal}
-                />
-                <UpdateCharacterModal
-                    id={this.state.selectedCharacterId}
-                    show={this.state.showCharacterUpdateModal}
-                    onSubmit={this.toggleCharacterUpdateModal}
-                    characterService={this.characterService}
-                    onHide={this.toggleCharacterUpdateModal}
-                />
-                <h3>Kampfreihenfolge</h3>
-                <Container>
-                    <Row>
-                        <Col md="auto">
-                            <Button onClick={this.toggleCharacterModal}>
-                                <BsPlusCircle/>
-                            </Button>
-                        </Col>
-                        { this.state.characters.map(this.renderCharacter) }
-                    </Row>
-                </Container>
-            </div>
+            <>
+                <Navbar>
+                    <Button onClick={this.toggleCharacterModal}>
+                        Add Character <BsPlusCircle/>
+                    </Button>
+                    <AddCharacterModal
+                        show={this.state.showCharacterModal}
+                        onSubmit={this.toggleCharacterModal}
+                        characterService={this.characterService}
+                        onHide={this.toggleCharacterModal}
+                    />
+                </Navbar>
+                <div className={styles.fight}>
+                    <UpdateCharacterModal
+                        id={this.state.selectedCharacterId}
+                        show={this.state.showCharacterUpdateModal}
+                        onSubmit={this.toggleCharacterUpdateModal}
+                        characterService={this.characterService}
+                        onHide={this.toggleCharacterUpdateModal}
+                    />
+                    <h3>Kampfreihenfolge</h3>
+                    <Container>
+                        <Row>
+                            { this.state.characters.map(this.renderCharacter) }
+                        </Row>
+                    </Container>
+                </div>
+            </>
         );
     }
 }

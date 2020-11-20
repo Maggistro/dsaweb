@@ -1,16 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
+import Navbar from '../components/Navbar/Navbar';
 
 class Index extends React.Component {
   test = 1;
   render() {
     return (
-      <div>
-        <h1>DSA Web App</h1>
-        <Link href='/fight'>
-          Kampf
-        </Link>
-      </div>
+      <>
+        <Navbar />
+        <div>
+          <h1>DSA Web App</h1>
+        </div>
+      </>
     );
   }
 }
