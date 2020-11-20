@@ -27,6 +27,9 @@ class UpdateCharacterModal extends React.Component<Props, State> {
     }
 
     render() {
+        let modalProps = Object.assign({}, this.props) as ModalProps;
+        modalProps.id = undefined;
+        modalProps.characterService = undefined;
         return <Modal {...this.props}>
             <div>
                 <CloseButton onClick={this.props.onHide}></CloseButton>

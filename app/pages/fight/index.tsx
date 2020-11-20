@@ -9,7 +9,7 @@ import UpdateCharacterModal from '../../components/Modal/UpdateCharacterModal/Up
 import Navbar from '../../components/Navbar/Navbar';
 import { NextPageContext } from 'next';
 import { IncomingMessage, Server } from 'http';
-import SocketServerService from '../../services/SocketServerService';
+import SocketServerService, { ExtendedHttpServer } from '../../services/SocketServerService';
 
 type CharacterEntry = {
         order: number,
@@ -192,9 +192,8 @@ export async function getServerSideProps(context: NextPageContext) {
     // Fetch data from external db
     const characterService = new CharacterService();
     const characters = await characterService.getCharactersFromDb();
-    debugger;
     const request = context.req as IncomingMessage & {
-        server: Server
+        server: ExtendedHttpServer
     };
 
     new SocketServerService(request.server);

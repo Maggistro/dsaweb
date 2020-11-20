@@ -15,21 +15,23 @@ class SocketClientService
     }
 
     initData() {
-        this.client = io({
-            transports: ['websocket']
-        });
+        if (typeof window !== 'undefined') {
+            this.client = io({
+                transports: ['websocket']
+            });
 
-        this.client.on('connect', () => {
-            console.log(`connected to server`);
-        });
+            this.client?.on('connect', () => {
+                console.log(`connected to server`);
+            });
 
-        this.client.on('changes arrived', (data: {test: string}) => {
-            console.log(`updating data with ${data}`);
-        });
+            this.client?.on('changes arrived', (data: {test: string}) => {
+                console.log(`updating data with ${data}`);
+            });
 
-        this.client.on('disconnect', () => {
-            console.log('disconnect');
-        });
+            this.client?.on('disconnect', () => {
+                console.log('disconnect');
+            });
+        }
     }
 
     update() {
