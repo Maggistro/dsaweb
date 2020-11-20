@@ -22,7 +22,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                         $set: {
                             primaryAttributes: data.primaryAttributes,
                         }
-                    }, (err, doc) => {
+                    },
+                    {
+                        useFindAndModify: false,
+                    },
+                    (err, doc) => {
                         if (err) return res.status(400).json({ message: `Could not update character with id ${id}` });
                         res.status(200).json(doc?.toJSON());
                     });

@@ -7,6 +7,9 @@ import styles from './fight.module.css';
 import AddCharacterModal from '../../components/Modal/AddCharacterModal/AddCharacterModal';
 import UpdateCharacterModal from '../../components/Modal/UpdateCharacterModal/UpdateCharacterModal';
 import Navbar from '../../components/Navbar/Navbar';
+import { NextPageContext } from 'next';
+import { IncomingMessage, Server } from 'http';
+import SocketServerService from '../../services/SocketServerService';
 
 type CharacterEntry = {
         order: number,
@@ -185,10 +188,16 @@ class Fight extends React.Component<FightProps, FightState>  {
     }
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: NextPageContext) {
     // Fetch data from external db
     const characterService = new CharacterService();
     const characters = await characterService.getCharactersFromDb();
+    debugger;
+    const request = context.req as IncomingMessage & {
+        server: Server
+    };
+
+    new SocketServerService(request.server);
 
     // Pass data to the page via props
     return {

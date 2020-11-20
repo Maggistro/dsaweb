@@ -2,6 +2,7 @@ import mongoose, { Document } from 'mongoose';
 import charactersFixture from "../fixtures/characters";
 import CharacterModel, { ICharacter } from '../model/CharacterModel';
 import ApiService from './ApiService';
+import SocketClientService from './SocketClientService';
 
 export type ModifyParameter = {
     Lebensenergie?: number,
@@ -67,6 +68,8 @@ class CharacterService
 
     private apiService: ApiService = new ApiService();
 
+    private socketService: SocketClientService = new SocketClientService();
+
     constructor(characters: Array<BlankCharacterType> = []) {
         if (!CharacterService.instance) {
             CharacterService.instance = this;
@@ -83,6 +86,7 @@ class CharacterService
         return this.apiService.addCharacter(character)
         .then((newCharacter: CharacterType) => {
             this.characters.push(this.extendCharacter(newCharacter));
+            this.socketService.update();
             return "Character added";
         })
         .catch((reason) => reason.toString())
@@ -93,6 +97,7 @@ class CharacterService
         .then((updatedCharacter: CharacterType) => {
             this.characters = this.characters.filter((entry: CharacterType) => entry.id !== id);
             this.characters.push(this.extendCharacter(updatedCharacter));
+            this.socketService.update();
             return "Character updated";
         })
         .catch((reason) => reason.toString())
