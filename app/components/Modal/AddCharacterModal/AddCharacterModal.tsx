@@ -12,12 +12,19 @@ type Props = ModalProps & {
     characterService: CharacterService,
 }
 
+/**
+ * Renders a modal for adding a character
+ */
 class AddCharacterModal extends React.Component<Props, State> {
 
     state = {
         message: ''
     }
 
+    /**
+     * Adds the character on submitting the form inside
+     * @param character The character data to add
+     */
     handleCharacterSubmit = async (character: NewCharacterType) => {
         const result = await this.props.characterService.addCharacter(character);
         this.setState({
@@ -25,6 +32,9 @@ class AddCharacterModal extends React.Component<Props, State> {
         });
     }
 
+    /**
+     * Renders the modal
+     */
     render() {
         return <Modal {...this.props}>
             <div>

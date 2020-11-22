@@ -12,11 +12,17 @@ type Props = BlankCharacterType & {
     onUpdate: Function
 }
 
+/**
+ * Type for the character change event parameter
+ */
 export type onChangeParameter = {
     id: number,
     Initiative?: number
 }
 
+/**
+ * Renders a card for a given character
+ */
 class CharacterCard extends React.Component<Props, State> {
 
     characterService: CharacterService;
@@ -30,11 +36,19 @@ class CharacterCard extends React.Component<Props, State> {
         this.characterService = new CharacterService();
     }
 
+    /**
+     * Suppress click event for drag
+     * @param event
+     */
     onClick = (event: React.MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
     }
 
+    /**
+     * Handle changes to the modifiers
+     * @param event The form change event
+     */
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(event.target.value, 10);
         this.setState({
@@ -50,6 +64,9 @@ class CharacterCard extends React.Component<Props, State> {
         this.props.onDataChange();
     }
 
+    /**
+     * Renders the card
+     */
     render() {
         return <div className={styles.character}>
             <h3>{this.props.name}</h3>

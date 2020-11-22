@@ -1,6 +1,9 @@
 import mongoose, { Document, mongo, Schema } from "mongoose"
 import { PrimaryAttributes, SecondaryAttributes } from "../services/CharacterService";
 
+/**
+ * Type for the database character
+ */
 export interface ICharacter extends Document {
     name: string,
     primaryAttributes: PrimaryAttributes,
@@ -33,6 +36,9 @@ const schema: Schema = new Schema({
     }
 })
 
+/**
+ * Model for a character in the db
+ */
 const CharacterModel = mongoose.models && mongoose.models.Character
     ? mongoose.model<ICharacter>('Character')
     : mongoose.model<ICharacter>('Character', schema);

@@ -13,6 +13,9 @@ type State = {
     loading: boolean
 }
 
+/**
+ * Renders a input form for a character
+ */
 class CharacterForm extends React.Component<Props, State>{
     state = {
         name: '',
@@ -29,6 +32,9 @@ class CharacterForm extends React.Component<Props, State>{
         loading: false,
     }
 
+    /**
+     * Populates form if initial data was given
+     */
     componentDidMount() {
         if (this.props.initialData) {
             this.setState({
@@ -38,6 +44,10 @@ class CharacterForm extends React.Component<Props, State>{
         }
     }
 
+    /**
+     * Get form values and sends them to the onSubmit handler
+     * @param event Click event on submit button
+     */
     handleSubmit = async (event: MouseEvent) => {
         this.setState({
             loading: true
@@ -52,6 +62,9 @@ class CharacterForm extends React.Component<Props, State>{
         event.preventDefault();
     }
 
+    /**
+     * Renders the form
+     */
     render() {
         return <Form>
             <FormGroup>

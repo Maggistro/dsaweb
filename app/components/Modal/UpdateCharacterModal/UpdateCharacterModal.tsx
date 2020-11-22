@@ -13,12 +13,19 @@ type Props = ModalProps & {
     characterService: CharacterService,
 }
 
+/**
+ * Renders a update character modal
+ */
 class UpdateCharacterModal extends React.Component<Props, State> {
 
     state = {
         message: ''
     }
 
+    /**
+     * Sends the update data for an existing character
+     * @param character The updated character data
+     */
     handleCharacterSubmit = async (character: NewCharacterType) => {
         const result = await this.props.characterService.updateCharacter(this.props.id, character);
         this.setState({
@@ -26,6 +33,9 @@ class UpdateCharacterModal extends React.Component<Props, State> {
         });
     }
 
+    /**
+     * Renders the modal
+     */
     render() {
         let modalProps = Object.assign({}, this.props) as ModalProps;
         modalProps.id = undefined;

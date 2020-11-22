@@ -1,15 +1,18 @@
 import { CharacterType, NewCharacterType } from "./CharacterService";
 
-
-export type DocumentResponse<T> = Response & {
-    body: T
-}
-
 type ErrorResponse = {
     message: string
 }
 
+/**
+ * Api service handling request to the api
+ */
 class ApiService {
+
+    /**
+     * Sends a character add request to the backend
+     * @param character Character data to be added
+     */
     async addCharacter(character: NewCharacterType): Promise<CharacterType> {
         const response = await fetch('/api/character', {
             method: 'PUT',
@@ -28,9 +31,14 @@ class ApiService {
         return Promise.reject(error.message);
     }
 
+    /**
+     * Sends an update character request to the server
+     * @param id The characters id
+     * @param character The updatea character data
+     */
     async updateCharacter(id: string, character: NewCharacterType): Promise<CharacterType> {
         const response = await fetch(`/api/character/${id}`, {
-            method: 'POST',
+            method: 'PATCH',
             body: JSON.stringify(character),
             headers: {
                 'Content-Type': 'application/json',

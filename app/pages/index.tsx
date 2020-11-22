@@ -2,8 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar/Navbar';
 
+/**
+ * Index/Home page
+ */
 class Index extends React.Component {
-  test = 1;
+
+  /**
+   * Render the home page with navbar
+   */
   render() {
     return (
       <>

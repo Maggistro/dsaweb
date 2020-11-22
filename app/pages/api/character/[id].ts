@@ -8,13 +8,18 @@ type CharacterUpdateBody = {
     primaryAttributes: PrimaryAttributes
 };
 
+/**
+ * Handler for rout /api/character/<id>
+ * @param req Incoming request
+ * @param res Outgoing json response
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     return new Promise(resolve => {
         const characterService = new CharacterService();
         const id = req.query.id as string;
         try {
             switch (req.method) {
-                case "POST":
+                case "PATCH": // update character
                     const data = req.body as CharacterUpdateBody;
                     mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, { useNewUrlParser: true });
                     CharacterModel.findByIdAndUpdate(
@@ -33,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             resolve();
                         });
                     break;
-                case "GET":
+                case "GET": // get a single character
                     mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, { useNewUrlParser: true });
                     CharacterModel.findById(id, (err, doc) => {
                             if (err) return res.status(400).json({ message: `Could not find character with id ${id}` });

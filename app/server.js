@@ -8,6 +8,9 @@ const nextHandler = nextApp.getRequestHandler();
 
 let port = 3000;
 
+/**
+ * Start our custom server and attach the http server instance to the req object
+ */
 nextApp.prepare().then(() => {
     app.all('*', (req, res) => {
         req.server = server;

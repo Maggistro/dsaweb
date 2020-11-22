@@ -3,11 +3,15 @@ import CharacterModel from "../model/CharacterModel";
 import CharacterService from "../services/CharacterService";
 import characters from "./characters";
 
+/**
+ * Seeds the database with some preset data
+ * @deprecated
+ */
 function seedCharacters() {
     const characterService = new CharacterService();
     const models = characters.map((character) => {
         const model = new CharacterModel({
-            name: character.title,
+            name: character.name,
             primaryAttributes: character.primaryAttributes,
         });
         model.secondaryAttributes = characterService.calculateSecondaryStats(character);

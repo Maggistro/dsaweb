@@ -1,11 +1,17 @@
 import { io, Socket } from "socket.io-client";
 
+/**
+ * Manages socket communication on the client
+ */
 class SocketClientService
 {
     static instance: SocketClientService;
 
     private client: Socket | undefined;
 
+    /**
+     * Construct service as singleton
+     */
     constructor() {
         if (!SocketClientService.instance) {
             SocketClientService.instance = this;
@@ -14,6 +20,9 @@ class SocketClientService
         return SocketClientService.instance;
     }
 
+    /**
+     * Connect socket to server and register listeners
+     */
     initData() {
         if (typeof window !== 'undefined') {
             this.client = io({
@@ -34,6 +43,9 @@ class SocketClientService
         }
     }
 
+    /**
+     * Send an update request via socket
+     */
     update() {
         this.client?.emit('update');
     }

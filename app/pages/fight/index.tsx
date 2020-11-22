@@ -30,6 +30,9 @@ type FightProps = {
     characters: Array<BlankCharacterType>
 }
 
+/**
+ * Page containing the fight order
+ */
 class Fight extends React.Component<FightProps, FightState>  {
     state = {
         isDragging: false,
@@ -45,6 +48,9 @@ class Fight extends React.Component<FightProps, FightState>  {
         this.characterService = new CharacterService(props.characters);
     }
 
+    /**
+     * Initialise the characters in fight on load
+     */
     componentDidMount() {
         this.setState({
             characters: this.props.characters
@@ -58,6 +64,10 @@ class Fight extends React.Component<FightProps, FightState>  {
         });
     }
 
+    /**
+     * Handle changes to a characters initiative
+     * @param data Add new/updated character and reorder
+     */
     updateOrder = (data: onChangeParameter) => {
         const newCharacters = this.state.characters.map((entry) => ({
             ...entry,
@@ -69,6 +79,11 @@ class Fight extends React.Component<FightProps, FightState>  {
         });
     }
 
+    /**
+     * Handles reordering by drag/drop of a character card
+     * @param left position in pixel from the left of the screen
+     * @param id The moved characters id
+     */
     updateOrderManual = (left: number, id: string) => {
         const newCharacters = this.state.characters
             .map((character: CharacterEntry) => {
@@ -90,6 +105,10 @@ class Fight extends React.Component<FightProps, FightState>  {
             });
     }
 
+    /**
+     * Update card position ( stick to mouse )
+     * @param event Mouse move event
+     */
     onDrag = (event: React.MouseEvent) => {
         if (this.state.isDragging) {
             event.currentTarget.setAttribute('style',
@@ -98,6 +117,10 @@ class Fight extends React.Component<FightProps, FightState>  {
         }
     }
 
+    /**
+     * Initiate dragging behaviour
+     * @param event Mouse down event
+     */
     onMouseDown = (event: React.MouseEvent) => {
         this.setState({
             isDragging: true
@@ -108,6 +131,11 @@ class Fight extends React.Component<FightProps, FightState>  {
         event.currentTarget.parentElement?.classList.add(styles.dragging);
     }
 
+    /**
+     * Handles end of a drag operation
+     * @param event Mouse up event
+     * @param id The character beeing dragged
+     */
     onMouseUp = (event: React.MouseEvent, id: string) => {
         if (this.state.isDragging) {
             this.setState({
@@ -121,12 +149,19 @@ class Fight extends React.Component<FightProps, FightState>  {
         }
     }
 
+    /**
+     * Show/hide character add modal
+     */
     toggleCharacterModal = () => {
         this.setState({
             showCharacterModal: !this.state.showCharacterModal
         });
     }
 
+    /**
+     * Show/hide character update modal
+     * @param id The target characters id
+     */
     toggleCharacterUpdateModal = (id: string) => {
         this.setState({
             selectedCharacterId: id,
@@ -134,6 +169,11 @@ class Fight extends React.Component<FightProps, FightState>  {
         });
     }
 
+    /**
+     * Renders a single character card in order
+     * @param character The character data for fight order
+     * @param key The render key/index
+     */
     renderCharacter = (character: CharacterEntry, key: number) =>
         <Col
             key={key}
@@ -154,6 +194,9 @@ class Fight extends React.Component<FightProps, FightState>  {
             />
         </Col>
 
+    /**
+     * Renders the fight page with navbar and fight order
+     */
     render() {
         return (
             <>
@@ -188,6 +231,12 @@ class Fight extends React.Component<FightProps, FightState>  {
     }
 }
 
+/**
+ * Fetches initial data on the server side.
+ * Initialise Server side socket server.
+ *
+ * @param context Context for page load
+ */
 export async function getServerSideProps(context: NextPageContext) {
     // Fetch data from external db
     const characterService = new CharacterService();

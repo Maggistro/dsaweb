@@ -8,12 +8,17 @@ type CharacterInsertBody = {
     primaryAttributes: PrimaryAttributes
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse, next: Function) {
+/**
+ * Api handler for route /api/character
+ * @param req Incoming request
+ * @param res Outgoing json response
+ */
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     return new Promise(resolve => {
         try {
             const characterService = new CharacterService();
             switch (req.method) {
-                case "PUT":
+                case "PUT": // add new character
                     const data = req.body as CharacterInsertBody;
                     const character = {
                         name: data.name,
@@ -33,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse,
                         resolve();
                     });
                     break;
-                case 'GET':
+                case 'GET': // get all character
                     mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, { useNewUrlParser: true });
                     CharacterModel.find((err, docs) => {
                         if (err) return res.status(400).json({ message: `Could not fetch characters` });

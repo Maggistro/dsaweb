@@ -4,6 +4,9 @@ import CharacterModel, { ICharacter } from '../model/CharacterModel';
 import ApiService from './ApiService';
 import SocketClientService from './SocketClientService';
 
+/**
+ * Type for character modifiers
+ */
 export type ModifyParameter = {
     Lebensenergie?: number,
     Astralenergie?: number,
@@ -16,6 +19,9 @@ export type ModifyParameter = {
     Wundschwelle?: number
 }
 
+/**
+ * Type for primary attributes
+ */
 export type PrimaryAttributes = {
     Mut: number,
     Klugheit: number,
@@ -27,6 +33,9 @@ export type PrimaryAttributes = {
     Koerperkraft: number
 }
 
+/**
+ * Type for secondary attributes
+ */
 export type SecondaryAttributes = {
     Lebensenergie: number,
     Astralenergie: number,
@@ -39,15 +48,24 @@ export type SecondaryAttributes = {
     Wundschwelle: number
 }
 
+/**
+ * Type for a new character without id
+ */
 export type NewCharacterType = {
     name: string,
     primaryAttributes: PrimaryAttributes
 }
 
+/**
+ * Type for new character with id w/o secondary attributes
+ */
 export type BlankCharacterType = NewCharacterType & {
     id: string
 }
 
+/**
+ * Type for a standart character
+ */
 export type CharacterType = BlankCharacterType & {
     secondaryAttributes: SecondaryAttributes
 };
@@ -59,7 +77,9 @@ type ExtendedCharacterType = CharacterType & {
     }
 };
 
-
+/**
+ * Manages the characterdata for the page
+ */
 class CharacterService
 {
     static instance: CharacterService;
@@ -70,6 +90,10 @@ class CharacterService
 
     private socketService: SocketClientService = new SocketClientService();
 
+    /**
+     * Singleton constructor the the character service
+     * @param characters Optional initial data values
+     */
     constructor(characters: Array<BlankCharacterType> = []) {
         if (!CharacterService.instance) {
             CharacterService.instance = this;
@@ -78,10 +102,19 @@ class CharacterService
         return CharacterService.instance;
     }
 
+    /**
+     * Initialise the services' Data
+     * @param characters Optional characterdata for initiation
+     */
     initData(characters: Array<BlankCharacterType>) {
         this.characters = (characters.length > 0 ? characters : charactersFixture).map(this.extendBlankCharacter);;
     }
 
+    /**
+     * Adds a character to the dataset.
+     * Also triggers a update call via the socket connection
+     * @param character The new character data
+     */
     async addCharacter(character: NewCharacterType): Promise<string> {
         return this.apiService.addCharacter(character)
         .then((newCharacter: CharacterType) => {
@@ -92,6 +125,12 @@ class CharacterService
         .catch((reason) => reason.toString())
     }
 
+    /**
+     * Updates a character in the dataset
+     * Also triggers a update call via the socket connection
+     * @param id The characters id
+     * @param character Updated character data
+     */
     async updateCharacter(id: string, character: NewCharacterType): Promise<string> {
         return this.apiService.updateCharacter(id, character)
         .then((updatedCharacter: CharacterType) => {
@@ -103,6 +142,10 @@ class CharacterService
         .catch((reason) => reason.toString())
     }
 
+    /**
+     * Extends a standart character with life data
+     * @param character A standart character
+     */
     extendCharacter = (character: CharacterType): ExtendedCharacterType => {
         return {
             ...character,
@@ -132,6 +175,10 @@ class CharacterService
         }
     }
 
+    /**
+     * Adds primary + life data to a character
+     * @param blankCharacter A new character w/o secondary attributes
+     */
     extendBlankCharacter = (blankCharacter: BlankCharacterType): ExtendedCharacterType => {
         return {
             ...blankCharacter,
@@ -162,14 +209,25 @@ class CharacterService
         }
     }
 
+    /**
+     * Return all characters
+     */
     getCharacters(): Array<CharacterType> {
         return this.characters;
     }
 
+    /**
+     * Get a single character from the dataset
+     * @param id The characters id
+     */
     getCharacter(id: string): CharacterType | undefined {
         return this.characters.find(entry => entry.id === id);
     }
 
+    /**
+     * @access server only
+     * Retrieves the characters from the database. Use this to populate data on the server side for prerendering
+     */
     async getCharactersFromDb(): Promise<Array<BlankCharacterType>> {
         return new Promise<Array<BlankCharacterType>>((resolve, reject) => {
             const client = mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_DATABASE}`, {useNewUrlParser: true})
@@ -188,6 +246,10 @@ class CharacterService
         })
     }
 
+    /**
+     * Calculate a characters secondary stats
+     * @param character A new character
+     */
     calculateSecondaryStats(character: BlankCharacterType) {
         return {
             Lebensenergie: 0, // TODO
@@ -202,12 +264,21 @@ class CharacterService
         }
     }
 
+    /**
+     * Get the current initiative including modifiers for a character
+     * @param id The characters id
+     */
     getInitiative(id: string): number {
         const character = this.characters.find((entry) => entry.id === id );
         if (!character) return 0;
         return character.secondaryAttributes.Initiative + character.modification.secondary.Initiative;
     }
 
+    /**
+     * Add a modification to a characters secondary attributes
+     * @param id The characters id
+     * @param modification The modificated fields as key/value object
+     */
     modifySecondary = (id: string, modification: ModifyParameter) => {
         const character = this.characters.find((entry) => entry.id === id );
         if (!character) return 0;
