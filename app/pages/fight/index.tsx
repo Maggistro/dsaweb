@@ -222,7 +222,9 @@ class Fight extends React.Component<FightProps, FightState>  {
                     <h3>Kampfreihenfolge</h3>
                     <Container>
                         <Row>
-                            { this.state.characters.map(this.renderCharacter) }
+                            { this.state.characters
+                                .sort((char1, char2) => char1.order < char2.order ? -1 : 1)
+                                .map(this.renderCharacter) }
                         </Row>
                     </Container>
                 </div>

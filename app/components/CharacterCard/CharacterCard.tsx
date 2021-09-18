@@ -1,13 +1,13 @@
 import React from 'react';
 import { Button, FormControl, FormGroup, FormLabel } from 'react-bootstrap';
-import CharacterService, { BlankCharacterType } from '../../services/CharacterService';
+import CharacterService, { ExtendedCharacterType } from '../../services/CharacterService';
 import styles from './CharacterCard.module.css';
 
 type State = {
     initiativeModifier: number
 }
 
-type Props = BlankCharacterType & {
+type Props = ExtendedCharacterType & {
     onDataChange: Function,
     onUpdate: Function
 }
@@ -26,11 +26,7 @@ export type onChangeParameter = {
 class CharacterCard extends React.Component<Props, State> {
 
     characterService: CharacterService;
-
-    state = {
-        initiativeModifier: 0
-    }
-
+    
     constructor(props: Props) {
         super(props);
         this.characterService = new CharacterService();
@@ -51,9 +47,6 @@ class CharacterCard extends React.Component<Props, State> {
      */
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(event.target.value, 10);
-        this.setState({
-            initiativeModifier: newValue
-        });
 
         this.characterService.modifySecondary(
             this.props.id,
@@ -80,7 +73,7 @@ class CharacterCard extends React.Component<Props, State> {
                 <FormControl
                     onChange={this.handleChange}
                     type="number"
-                    value={this.state.initiativeModifier}
+                    value={this.characterService.getCharacter(this.props.id)?.modification.secondary.Initiative}
                 />
             </FormGroup>
             <Button onClick={() => this.props.onUpdate(this.props.id)}>

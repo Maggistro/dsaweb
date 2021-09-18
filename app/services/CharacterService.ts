@@ -70,7 +70,10 @@ export type CharacterType = BlankCharacterType & {
     secondaryAttributes: SecondaryAttributes
 };
 
-type ExtendedCharacterType = CharacterType & {
+/**
+ * Character with modifieres
+ */
+export type ExtendedCharacterType = CharacterType & {
     modification: {
         primary: PrimaryAttributes,
         secondary: SecondaryAttributes
@@ -220,7 +223,7 @@ class CharacterService
      * Get a single character from the dataset
      * @param id The characters id
      */
-    getCharacter(id: string): CharacterType | undefined {
+    getCharacter(id: string): ExtendedCharacterType | undefined {
         return this.characters.find(entry => entry.id === id);
     }
 

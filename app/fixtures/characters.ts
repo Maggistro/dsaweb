@@ -3,7 +3,7 @@ import { BlankCharacterType } from "../services/CharacterService";
 export default [
     {
         id: 1,
-        title: "Title1",
+        name: "Title1",
         primaryAttributes: {
             Mut: 10,
             Klugheit: 10,
@@ -17,7 +17,7 @@ export default [
     },
     {
         id: 2,
-        title: "Title2",
+        name: "Title2",
         primaryAttributes: {
             Mut: 10,
             Klugheit: 10,
@@ -31,7 +31,7 @@ export default [
     },
     {
         id: 3,
-        title: "Title3",
+        name: "Title3",
         primaryAttributes: {
             Mut: 10,
             Klugheit: 10,
@@ -43,4 +43,4 @@ export default [
             Koerperkraft: 10
         }
     },
-] as Array<BlankCharacterType>
+] as unknown as Array<BlankCharacterType>
